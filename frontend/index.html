@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CineMatch AI</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <nav>
+        <div class="logo">🎬 CineMatch AI</div>
+        <div>
+            <a href="favorites.html">Favorites</a>
+            <button id="theme-toggle">🌙 Theme</button>
+            <button onclick="handleLogout()">Logout</button>
+        </div>
+    </nav>
+
+    <header style="text-align:center; padding: 50px;">
+        <h1>What's the vibe today?</h1>
+        <input type="text" id="vibe-query" placeholder="e.g., Cyberpunk movies..." style="padding:10px; width:300px;">
+        <button onclick="fetchMovies()">Search</button>
+    </header>
+
+    <div id="movie-grid" class="grid"></div>
+    <div id="notification-container"></div>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - CineMatch</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <nav><div class="logo">🎬 CineMatch</div></nav>
+    <div style="max-width: 400px; margin: 100px auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px;">
+        <h2>User Login</h2>
+        <input type="email" id="email" placeholder="Email" style="width:100%; margin-bottom:10px; padding:8px;">
+        <input type="password" id="password" placeholder="Password" style="width:100%; margin-bottom:10px; padding:8px;">
+        <button onclick="handleSignUp()" style="width:48%">Sign Up</button>
+        <button onclick="handleLogin()" style="width:48%">Log In</button>
+    </div>
+    <div id="notification-container"></div>
+    <script src="script.js"></script>
+</body>
+</html>
