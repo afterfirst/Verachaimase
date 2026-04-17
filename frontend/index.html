@@ -1,28 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CineMatch AI</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <nav>
-        <div class="logo">🎬 CineMatch AI</div>
-        <div>
+        <div class="logo">🎬 CINEMATCH AI</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
             <a href="favorites.html">Favorites</a>
             <button id="theme-toggle">🌙 Theme</button>
-            <button onclick="handleLogout()">Logout</button>
+            <button onclick="handleLogout()" class="logout-btn">Logout</button>
         </div>
     </nav>
 
-    <header style="text-align:center; padding: 50px;">
-        <h1>What's the vibe today?</h1>
-        <input type="text" id="vibe-query" placeholder="e.g., Cyberpunk movies..." style="padding:10px; width:300px;">
-        <button onclick="fetchMovies()">Search</button>
+    <header>
+        <h1>Your Next Favorite Movie,<br><span style="color:var(--accent)">Found by AI.</span></h1>
+        <div class="search-box">
+            <input type="text" id="vibe-query" placeholder="Tell me your vibe...">
+            <button onclick="fetchMovies()">Find Movie</button>
+        </div>
     </header>
 
-    <div id="movie-grid" class="grid"></div>
+    <main>
+        <div id="movie-grid" class="grid"></div>
+    </main>
+
     <div id="notification-container"></div>
+    
     <script src="script.js"></script>
 </body>
 </html>
