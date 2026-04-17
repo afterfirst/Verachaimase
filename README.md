@@ -1,2 +1,2 @@
 # Verachaimase
-Computer Engineering Essential projcec
+Computer Engineering Essential project
