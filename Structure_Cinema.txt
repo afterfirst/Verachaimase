@@ -1,0 +1,17 @@
+/my-cine-match
+├── /public              # Static assets (images, icons)
+├── /src
+│   ├── /app             # Page routes (Next.js App Router)
+│   │   ├── /login       # User Login page 
+│   │   ├── /favorites   # Tier B: Saved movies page 
+│   │   └── page.tsx     # Main dashboard / search UI
+│   ├── /components      # Reusable UI pieces
+│   │   ├── MovieCard.tsx
+│   │   ├── Navbar.tsx   # Contains the Dark Mode toggle 
+│   │   └── Notification.tsx # Tier C: Toast logic 
+│   ├── /services        # Logic for APIs and Database
+│   │   ├── tmdb.ts      # TMDB API calls [cite: 8]
+│   │   ├── openai.ts    # AI "Vibe" processing [cite: 3]
+│   │   └── supabase.ts  # Database CRUD for favorites 
+│   └── /styles          # Tailwind CSS & Themes
+└── .env                 # API Keys (Do NOT commit to GitHub!) [cite: 27]
