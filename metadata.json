@@ -1,0 +1,6 @@
+{
+  "name": "Kotoba Study",
+  "description": "AI-powered Japanese learning tool with OCR and dictionary integration.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": []
+}

@@ -1,0 +1,77 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // User Profile Validation
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'username', 'createdAt']) &&
+             data.keys().size() == 3 &&
+             data.uid == request.auth.uid &&
+             data.username is string && data.username.size() >= 2 && data.username.size() <= 50 &&
+             data.createdAt == request.time;
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isSignedIn() && isValidUser(incoming()) && isValidId(userId);
+      allow update: if isOwner(userId) && 
+                      incoming().diff(existing()).affectedKeys().hasOnly(['username']) &&
+                      incoming().username is string && incoming().username.size() >= 2;
+    }
+
+    // History Validation
+    function isValidHistory(data) {
+      return data.keys().hasAll(['userId', 'originalText', 'timestamp', 'tokens']) &&
+             data.keys().size() == 4 &&
+             data.userId == request.auth.uid &&
+             data.originalText is string && data.originalText.size() <= 5000 &&
+             data.timestamp == request.time &&
+             data.tokens is list && data.tokens.size() <= 1000;
+    }
+
+    match /history/{historyId} {
+      allow list: if isOwner(resource.data.userId);
+      allow get: if isOwner(resource.data.userId);
+      allow create: if isOwner(incoming().userId) && isValidHistory(incoming()) && isValidId(historyId);
+      allow delete: if isOwner(existing().userId);
+    }
+
+    // Favorites Validation
+    function isValidFavorite(data) {
+      return data.keys().hasAll(['userId', 'surface', 'reading', 'translation', 'pos', 'timestamp']) &&
+             data.userId == request.auth.uid &&
+             data.surface is string && data.surface.size() <= 100 &&
+             data.timestamp == request.time;
+    }
+
+    match /favorites/{favId} {
+      allow list: if isOwner(resource.data.userId);
+      allow create: if isOwner(incoming().userId) && isValidFavorite(incoming()) && isValidId(favId);
+      allow delete: if isOwner(existing().userId);
+    }
+  }
+}
