@@ -137,9 +137,9 @@ npm run build
 
 #### 4. Configure Environment
 Create your `.env` and `firebase-applet-config.json` as described in the sections above. 
-- **CRITICAL**: Set `VITE_APP_URL` to your domain or Public IP (e.g., `VITE_APP_URL=http://13.217.14.158`).
+- **CRITICAL**: Set `VITE_APP_URL` to your domain or Public IP (e.g., `VITE_APP_URL=http://XX.XXX.XX.XXX`).
 - If using Nginx: Just the IP/Domain is enough.
-- If NOT using Nginx: Include the port (e.g., `http://13.217.14.158:3000`).
+- If NOT using Nginx: Include the port (e.g., `http://XX.XXX.XX.XXX:3000`).
 
 #### 5. Build for Production
 This is required before starting the server in production mode:
@@ -163,11 +163,11 @@ To host your app professionally, create a dedicated Nginx configuration:
    ```
 
 2. **Paste this configuration**:
-   *(Replace `13.217.14.158` with your actual IP or Domain. Do NOT include `http://` in the `server_name` line.)*
+   *(Replace `XX.XXX.XX.XXX` with your actual IP or Domain. Do NOT include `http://` in the `server_name` line.)*
    ```nginx
    server {
        listen 80;
-       server_name 13.217.14.158;
+       server_name XX.XXX.XX.XXX;
 
        location / {
            proxy_pass http://localhost:3000;
@@ -217,8 +217,8 @@ If you can access `localhost:3000` inside your terminal (e.g., via `curl`) but N
 The `VITE_APP_URL` in your `.env` file **does not change where the app runs**. 
 - The server ALWAYS runs on `0.0.0.0:3000` (all available IPs).
 - `VITE_APP_URL` just tells your **browser** where to send requests.
-- If you use Nginx, set it to: `VITE_APP_URL=http://13.217.14.158`
-- If you DON'T use Nginx, set it to: `VITE_APP_URL=http://13.217.14.158:3000`
+- If you use Nginx, set it to: `VITE_APP_URL=http://XX.XXX.XX.XXX`
+- If you DON'T use Nginx, set it to: `VITE_APP_URL=http://XX.XXX.XX.XXX:3000`
 
 #### 3. Ubuntu Firewall (ufw)
 Since you mentioned `ufw` is inactive, this step is likely fine, but double check:
