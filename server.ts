@@ -21,23 +21,37 @@ app.use(express.json());
 
 // API Routes
 app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  console.log(`[Server] Request: ${req.method} ${req.url}`);
   next();
 });
 
-app.get("/api/health", (req, res) => {
+const apiRouter = express.Router();
+app.use("/api", apiRouter);
+
+// Explicit health check
+apiRouter.get("/health", (req, res) => {
+  console.log("[Server] hit /api/health");
   res.json({ 
     status: "ok", 
     timestamp: new Date().toISOString(),
     env: process.env.NODE_ENV || 'development',
-    appUrl: process.env.VITE_APP_URL || 'not set'
+    isProduction: process.env.NODE_ENV === "production" || process.env.VERCEL === "1",
+    distExists: fs.existsSync(path.resolve(process.cwd(), "dist"))
   });
 });
 
-app.post("/api/ocr", upload.single("file"), async (req, res) => {
+// Test POST route
+apiRouter.post("/test-post", (req, res) => {
+  console.log("[Server] hit /api/test-post");
+  res.json({ status: "ok", message: "POST is working correctly" });
+});
+
+apiRouter.post("/ocr", upload.single("file"), async (req, res) => {
+  console.log("[Server] hit /api/ocr");
   try {
     const file = req.file;
     if (!file) {
+      console.warn("[Server] /api/ocr: No file in request");
       return res.status(400).json({ error: "No file uploaded" });
     }
 
@@ -86,7 +100,8 @@ const CACHE_TTL = 1000 * 60 * 60; // 1 hour
 let lastJishoCall = 0;
 const MIN_CALL_INTERVAL = 500; // 500ms between external calls
 
-app.get("/api/jisho", async (req, res) => {
+apiRouter.get("/jisho", async (req, res) => {
+  console.log("[Server] hit /api/jisho");
   try {
     const keyword = req.query.keyword as string;
     if (!keyword) {
@@ -142,6 +157,8 @@ app.get("/api/jisho", async (req, res) => {
     res.status(status).json({ error: `Jisho API Error: ${message}` });
   }
 });
+
+app.use("/api", apiRouter);
 
 async function startServer() {
   const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL === "1";
@@ -209,6 +226,16 @@ async function startServer() {
     }
   }
 
+  // Global 404 handler for API or other unmatched routes
+  app.use((req, res) => {
+    console.warn(`[Server] 404 - Unmatched Request: ${req.method} ${req.url}`);
+    res.status(404).json({
+      error: "Route not found",
+      method: req.method,
+      path: req.url
+    });
+  });
+
   const appUrl = process.env.VITE_APP_URL || process.env.APP_URL || `http://localhost:${PORT}`;
   
   if (process.env.VERCEL) {
@@ -219,6 +246,14 @@ async function startServer() {
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on ${appUrl}`);
     console.log(`API endpoints: ${appUrl}/api/ocr, ${appUrl}/api/jisho`);
+    
+    // Debug: Print registered routes
+    console.log("[Server] Registered routes:");
+    app._router.stack.forEach((r: any) => {
+      if (r.route && r.route.path) {
+        console.log(`[Server] Route: ${Object.keys(r.route.methods).join(',').toUpperCase()} ${r.route.path}`);
+      }
+    });
   });
 }
 
