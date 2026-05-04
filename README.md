@@ -137,9 +137,9 @@ npm run build
 
 #### 4. Configure Environment
 Create your `.env` and `firebase-applet-config.json` as described in the sections above. 
-- **CRITICAL**: Set `VITE_APP_URL` to your domain or Public IP (e.g., `VITE_APP_URL=http://XX.XXX.XX.XXX`).
+- **CRITICAL**: Set `VITE_APP_URL` to your domain or Public IP (e.g., `VITE_APP_URL=http://XX.XXX.XX.XX`).
 - If using Nginx: Just the IP/Domain is enough.
-- If NOT using Nginx: Include the port (e.g., `http://XX.XXX.XX.XXX:3000`).
+- If NOT using Nginx: Include the port (e.g., `http://XX.XXX.XX.XX:3000`).
 
 #### 5. Build for Production
 This is required before starting the server in production mode:
@@ -163,11 +163,11 @@ To host your app professionally, create a dedicated Nginx configuration:
    ```
 
 2. **Paste this configuration**:
-   *(Replace `XX.XXX.XX.XXX` with your actual IP or Domain. Do NOT include `http://` in the `server_name` line.)*
+   *(Replace `XX.XXX.XX.XX` with your actual IP or Domain. Do NOT include `http://` in the `server_name` line.)*
    ```nginx
    server {
        listen 80;
-       server_name XX.XXX.XX.XXX;
+       server_name XX.XXX.XX.XX;
 
        location / {
            proxy_pass http://localhost:3000;
@@ -200,6 +200,26 @@ To host your app professionally, create a dedicated Nginx configuration:
    sudo systemctl restart nginx
    ```
 
+### 🚀 Hosting on Vercel
+
+This app is configured to run as a full-stack application on Vercel using Serverless Functions for the backend and static hosting for the frontend.
+
+1. **Connect to GitHub**: Push your code to a GitHub repository.
+2. **Import to Vercel**: 
+   - Create a new project on Vercel and import your repository.
+   - Vercel will automatically detect the `vercel.json` configuration.
+3. **Environment Variables**:
+   - Go to **Project Settings > Environment Variables**.
+   - Add `OCR_API_KEY` (Your API key from ocr.space).
+   - Add `GEMINI_API_KEY` (If using AI features).
+   - Add `VITE_APP_URL` (Set this to your Vercel deployment URL, e.g., `https://your-app.vercel.app`).
+4. **Deploy**: Click deploy. Vercel will build the frontend and set up the API routes.
+
+#### Why Vercel?
+- **Global CDN**: Faster asset delivery.
+- **Serverless API**: Your Express backend runs as a scalable serverless function.
+- **Automatic SSL**: HTTPS is handled out of the box.
+
 ### 🛠️ Troubleshooting
 
 #### 1. AWS/Cloud Security Group (CRITICAL)
@@ -217,8 +237,8 @@ If you can access `localhost:3000` inside your terminal (e.g., via `curl`) but N
 The `VITE_APP_URL` in your `.env` file **does not change where the app runs**. 
 - The server ALWAYS runs on `0.0.0.0:3000` (all available IPs).
 - `VITE_APP_URL` just tells your **browser** where to send requests.
-- If you use Nginx, set it to: `VITE_APP_URL=http://XX.XXX.XX.XXX`
-- If you DON'T use Nginx, set it to: `VITE_APP_URL=http://XX.XXX.XX.XXX:3000`
+- If you use Nginx, set it to: `VITE_APP_URL=http://XX.XXX.XX.XX`
+- If you DON'T use Nginx, set it to: `VITE_APP_URL=http://XX.XXX.XX.XX:3000`
 
 #### 3. Ubuntu Firewall (ufw)
 Since you mentioned `ufw` is inactive, this step is likely fine, but double check:
@@ -260,5 +280,9 @@ Ensure your `.env` file on the server has the correct `OCR_API_KEY`.
 Check PM2 logs to see if the server received the file.
 
 - **Permission Denied**: If binaries fail to run on Linux, try `chmod -R +x node_modules/.bin`.
-- **ERR_INVALID_URL_SCHEME**: This is fixed in the current scripts by using `node --import tsx server.ts `. 
+- **ERR_INVALID_URL_SCHEME**: This is fixed in the current scripts by using `node --import tsx server.ts`.
 - **Native Binding Error**: Ensure you are on Node 20. If it still fails, manually install the binding: `npm install @tailwindcss/oxide-linux-x64-gnu`.
+
+
+## 📄 License
+This project is built for educational purposes within the Google AI Studio environment.

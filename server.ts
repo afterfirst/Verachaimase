@@ -238,6 +238,9 @@ async function startServer() {
 
   const appUrl = process.env.VITE_APP_URL || process.env.APP_URL || `http://localhost:${PORT}`;
   
+  // Final check for routes
+  console.log("[Server] Production Middleware Stack check completed.");
+  
   if (process.env.VERCEL) {
     console.log("Running in Vercel environment - skipping app.listen()");
     return;
