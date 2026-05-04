@@ -282,7 +282,3 @@ Check PM2 logs to see if the server received the file.
 - **Permission Denied**: If binaries fail to run on Linux, try `chmod -R +x node_modules/.bin`.
 - **ERR_INVALID_URL_SCHEME**: This is fixed in the current scripts by using `node --import tsx server.ts`.
 - **Native Binding Error**: Ensure you are on Node 20. If it still fails, manually install the binding: `npm install @tailwindcss/oxide-linux-x64-gnu`.
-
-
-## 📄 License
-This project is built for educational purposes within the Google AI Studio environment.
