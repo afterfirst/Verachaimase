@@ -144,20 +144,69 @@ app.get("/api/jisho", async (req, res) => {
 });
 
 async function startServer() {
-  if (process.env.NODE_ENV !== "production") {
-    const { createServer: createViteServer } = await import("vite");
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), "dist");
-    if (fs.existsSync(distPath)) {
-      app.use(express.static(distPath));
-      app.get("*", (req, res) => {
-        res.sendFile(path.join(distPath, "index.html"));
+  const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL === "1";
+  console.log(`[Server] Environment: ${process.env.NODE_ENV || 'undefined'}`);
+  console.log(`[Server] Is Production: ${isProduction}`);
+  console.log(`[Server] CWD: ${process.cwd()}`);
+
+  if (!isProduction) {
+    console.log("[Server] Starting in DEVELOPMENT mode with Vite middleware");
+    try {
+      const { createServer: createViteServer } = await import("vite");
+      const vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: "spa",
       });
+      app.use(vite.middlewares);
+    } catch (e) {
+      console.error("[Server] Critical error starting Vite middleware:", e);
+    }
+  } else {
+    const distPath = path.resolve(process.cwd(), "dist");
+    const indexHtmlPath = path.join(distPath, "index.html");
+    console.log(`[Server] Starting in PRODUCTION mode.`);
+    console.log(`[Server] Serving assets from: ${distPath}`);
+    
+    if (fs.existsSync(distPath)) {
+      console.log("[Server] Found 'dist' directory.");
+      
+      // Serve static files with a long max-age for hashed assets
+      app.use(express.static(distPath, {
+        index: false,
+        maxAge: '1d'
+      }));
+
+      // Catch-all for SPA routing - but ONLY for non-file requests
+      app.get("*", (req, res, next) => {
+        // If the request looks like a file (has an extension), don't serve index.html
+        // This prevents the "MIME type text/html" error for missing JS/CSS files
+        if (req.url.includes('.') && !req.url.endsWith('.html')) {
+          return next();
+        }
+
+        if (fs.existsSync(indexHtmlPath)) {
+          res.sendFile(indexHtmlPath);
+        } else {
+          console.error(`[Server] index.html not found at ${indexHtmlPath}`);
+          res.status(404).send("Application shell not found. Please ensure the app is built.");
+        }
+      });
+    } else {
+      console.error("[Server] CRITICAL: 'dist' directory not found!");
+      // Fallback for preview environments where build might be missing
+      try {
+        console.log("[Server] Attempting fallback to Vite middleware...");
+        const { createServer: createViteServer } = await import("vite");
+        const vite = await createViteServer({
+          server: { middlewareMode: true },
+          appType: "spa",
+        });
+        app.use(vite.middlewares);
+        console.log("[Server] Fallbacked to Vite middleware successfully.");
+      } catch (e) {
+        console.error("[Server] Failed to fallback to Vite middleware:", e);
+        res.status(500).send("Server configuration error: 'dist' directory is missing.");
+      }
     }
   }
 
