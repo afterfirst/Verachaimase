@@ -205,7 +205,6 @@ async function startServer() {
         console.log("[Server] Fallbacked to Vite middleware successfully.");
       } catch (e) {
         console.error("[Server] Failed to fallback to Vite middleware:", e);
-        res.status(500).send("Server configuration error: 'dist' directory is missing.");
       }
     }
   }
