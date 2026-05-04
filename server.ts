@@ -53,8 +53,7 @@ app.post("/api/ocr", upload.single("file"), async (req, res) => {
     formData.append("base64Image", base64Image);
     formData.append("apikey", apiKey);
     formData.append("isOverlayRequired", "false");
-    formData.append("language", "jpn");
-    formData.append("OCREngine", "2");
+    formData.append("OCREngine", "3");
 
     const response = await axios.post("https://api.ocr.space/parse/image", formData, {
       headers: {
@@ -163,10 +162,20 @@ async function startServer() {
   }
 
   const appUrl = process.env.VITE_APP_URL || process.env.APP_URL || `http://localhost:${PORT}`;
+  
+  if (process.env.VERCEL) {
+    console.log("Running in Vercel environment - skipping app.listen()");
+    return;
+  }
+
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on ${appUrl}`);
     console.log(`API endpoints: ${appUrl}/api/ocr, ${appUrl}/api/jisho`);
   });
 }
 
+// Start the server (for local dev and standard Node environments)
 startServer();
+
+// Export for Vercel serverless function support
+export default app;
