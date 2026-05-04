@@ -1,0 +1,40 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "username": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "username", "createdAt"]
+    },
+    "HistoryItem": {
+      "title": "History Item",
+      "description": "A previously processed Japanese text",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "originalText": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "tokens": {
+          "type": "array",
+          "items": { "type": "object" }
+        }
+      },
+      "required": ["userId", "originalText", "timestamp", "tokens"]
+    }
+  },
+  "firestore": {
+    "users": {
+      "schema": "User",
+      "description": "Collection of users"
+    },
+    "history": {
+      "schema": "HistoryItem",
+      "description": "Collection of user's study history"
+    }
+  }
+}
